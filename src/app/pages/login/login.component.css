@@ -1,0 +1,431 @@
+/* =====================================================================
+   PANTALLA: LOGIN / REGISTRO  (diseño verde: panel de bienvenida + tarjeta)
+   - Los colores de esta pantalla están definidos aquí (variables --g-*),
+     así no cambian con el modo claro/oscuro del sistema.
+   - TAMAÑOS que puedes tocar:
+       .auth            -> max-width (ancho total) y gap (separación)
+       .auth            -> grid-template-columns (2º valor = ancho de la tarjeta)
+       .auth-card       -> padding (espacio interior)
+       .brand-logo / .auth-logo -> height (tamaño de los logos)
+   ===================================================================== */
+
+:host {
+  display: block;
+
+  /* Paleta verde */
+  --g-950: #062a20;
+  --g-900: #0a3a2c;
+  --g-800: #0d4a38;
+  --g-600: #138a5e;
+  --g-500: #1f9d6b;
+  --g-400: #34b583;
+  --mint: #d6f5e4;
+
+  /* Colores de la tarjeta clara */
+  --ink-l: #0f1f1a;
+  --muted-l: #6b7a76;
+  --field-bg: #eef1f0;
+  --field-line: #dfe4e2;
+
+  font-family: "Montserrat", Inter, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------- Fondo de página ---------- */
+.auth-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(900px 620px at 8% 108%, rgba(52, 181, 131, 0.42), transparent 62%),
+    radial-gradient(760px 520px at 88% -12%, rgba(31, 157, 107, 0.26), transparent 60%),
+    linear-gradient(135deg, var(--g-900) 0%, var(--g-800) 48%, var(--g-950) 100%);
+}
+
+/* ---------- Decoración (formas + flecha de tendencia) ---------- */
+.decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.shape {
+  position: absolute;
+  background: linear-gradient(145deg, rgba(52, 181, 131, 0.34), rgba(31, 157, 107, 0.1));
+}
+
+.s1 {
+  top: 0;
+  left: 0;
+  width: min(19vw, 290px);
+  height: 175px;
+  border-radius: 0 0 60px 0;
+}
+
+.s2 {
+  top: 160px;
+  left: 0;
+  width: 125px;
+  height: 135px;
+  border-radius: 0 56px 56px 0;
+  background: linear-gradient(145deg, rgba(52, 181, 131, 0.2), rgba(31, 157, 107, 0.06));
+}
+
+.s3 {
+  left: 33%;
+  bottom: 0;
+  width: min(24vw, 360px);
+  height: 270px;
+  border-radius: 64px 64px 0 0;
+  background: linear-gradient(180deg, rgba(31, 157, 107, 0.2), rgba(52, 181, 131, 0.55));
+}
+
+.s4 {
+  top: 42%;
+  right: 36%;
+  width: 190px;
+  height: 300px;
+  border-radius: 64px 0 0 64px;
+  background: linear-gradient(160deg, rgba(52, 181, 131, 0.22), rgba(31, 157, 107, 0.08));
+}
+
+.trend {
+  position: absolute;
+  left: -16px;
+  bottom: -6px;
+  width: min(20vw, 300px);
+  color: rgba(120, 220, 170, 0.12);
+}
+
+/* ---------- Estela que sigue al mouse ---------- */
+.interactive-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watercolor-trail-blob {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(52, 211, 153, 0.34) 0%,
+    rgba(16, 185, 129, 0.12) 60%,
+    transparent 80%
+  );
+  filter: blur(65px);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* ---------- Distribución: panel izquierdo + tarjeta derecha ---------- */
+.auth {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 620px);
+  align-items: center;
+  gap: 3rem;
+  max-width: 1500px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 2.5rem 3.5rem;
+}
+
+/* ---------- Panel de bienvenida ---------- */
+.brand-panel {
+  max-width: 470px;
+  margin-left: clamp(0px, 5vw, 110px);
+  color: #fff;
+}
+
+.brand-logo {
+  display: block;
+  height: 101px;
+  width: auto;
+  margin: 0 0 2.25rem -11px;   /* compensa el margen interno del SVG */
+}
+
+.brand-panel h1 {
+  margin: 0 0 1rem;
+  color: #fff;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.brand-panel p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1.12rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* ---------- Tarjeta ---------- */
+.card-wrap {
+  position: relative;
+  width: 100%;
+}
+
+/* Pestaña verde clara que asoma detrás de la tarjeta */
+.card-wrap::before {
+  content: "";
+  position: absolute;
+  top: -26px;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: var(--mint);
+  border-radius: 38px 38px 0 0;
+}
+
+.auth-card {
+  position: relative;
+  padding: 3rem 3.5rem 2.6rem;
+  color: var(--ink-l);
+  background: #f9fbfa;
+  border-radius: 34px;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.38);
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-logo {
+  display: block;
+  height: 70px;
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 0.9rem -8px;   /* compensa el margen interno del SVG */
+}
+
+.auth-title {
+  margin: 0 0 0.3rem;
+  color: var(--ink-l);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.auth-sub {
+  margin: 0 0 1.75rem;
+  color: var(--muted-l);
+  font-size: 1rem;
+}
+
+/* ---------- Campos ---------- */
+.field-group {
+  margin-bottom: 1.1rem;
+}
+
+.auth-card label {
+  display: block;
+  margin: 0 0 0.5rem;
+  color: #14201c;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.input-wrap {
+  position: relative;
+}
+
+.field-icon {
+  position: absolute;
+  top: 50%;
+  left: 1.15rem;
+  width: 22px;
+  height: 22px;
+  color: #4b5a55;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.auth-card input {
+  width: 100%;
+  min-height: 54px;
+  padding: 0.8rem 1.2rem 0.8rem 3.3rem;
+  color: var(--ink-l);
+  background: var(--field-bg);
+  border: 1px solid var(--field-line);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.98rem;
+  box-shadow: inset 0 1px 2px rgba(15, 31, 26, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.auth-card input::placeholder {
+  color: #8a9692;
+}
+
+.auth-card input:focus {
+  background: #fff;
+  border-color: var(--g-500);
+  box-shadow: 0 0 0 4px rgba(31, 157, 107, 0.18);
+  outline: none;
+}
+
+.field-error {
+  display: block;
+  margin: 0.4rem 0 0 1rem;
+  color: #dc2626;
+  font-size: 0.82rem;
+}
+
+.alert {
+  margin: 0.25rem 0 1rem;
+  padding: 0.8rem 1rem;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  font-size: 0.9rem;
+}
+
+/* ---------- Botón principal ---------- */
+.btn.primary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
+  margin-top: 0.6rem;
+  padding: 0.85rem 3.5rem;
+  color: #fff;
+  background: linear-gradient(135deg, #25a971, var(--g-600));
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(19, 138, 94, 0.35);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn.primary .arrow {
+  position: absolute;
+  top: 50%;
+  right: 1.5rem;
+  width: 22px;
+  height: 22px;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease;
+}
+
+.btn.primary:hover:not(:disabled) {
+  filter: brightness(1.07);
+  box-shadow: 0 16px 30px rgba(19, 138, 94, 0.42);
+}
+
+.btn.primary:hover:not(:disabled) .arrow {
+  transform: translate(4px, -50%);
+}
+
+.btn.primary:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.btn.primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn.primary:focus-visible {
+  outline: 3px solid rgba(31, 157, 107, 0.45);
+  outline-offset: 3px;
+}
+
+/* ---------- Pie: cambiar entre login y registro ---------- */
+.auth-footer {
+  margin-top: 1.4rem;
+  text-align: center;
+}
+
+.link {
+  padding: 0;
+  color: var(--g-600);
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #0b6446;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--g-500);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- Tablet y móvil: solo la tarjeta ---------- */
+@media (max-width: 960px) {
+  .auth {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .brand-panel,
+  .s3,
+  .s4,
+  .trend {
+    display: none;
+  }
+
+  .s1 { width: 42vw; height: 150px; }
+  .s2 { display: none; }
+
+  .auth-card {
+    padding: 2.5rem 2rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 2rem 1.35rem 1.75rem;
+    border-radius: 28px;
+  }
+
+  .auth-logo { height: 62px; margin-left: -7px; }
+  .auth-title { font-size: 1.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card { animation: none; }
+  .btn.primary, .btn.primary .arrow { transition: none; }
+}

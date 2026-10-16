@@ -1,0 +1,306 @@
+/* =====================================================================
+   ASISTENTE DE AYUDA (botón flotante + ventana de chat)
+   Usa las variables de color de src/styles.css, así sigue el tema verde
+   en modo claro y oscuro.
+   ===================================================================== */
+
+:host {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.85rem;
+  pointer-events: none;          /* solo los hijos reciben clics */
+}
+
+:host > * {
+  pointer-events: auto;
+}
+
+/* ---------- Botón flotante ---------- */
+.fab {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  color: #fff;
+  background: linear-gradient(135deg, #25a971, #0f7a52);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(15, 122, 82, 0.45);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  order: 2;
+}
+
+.fab svg {
+  width: 26px;
+  height: 26px;
+}
+
+.fab:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 14px 30px rgba(15, 122, 82, 0.55);
+}
+
+.fab:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline-offset: 3px;
+}
+
+/* ---------- Ventana ---------- */
+.panel {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(390px, calc(100vw - 2rem));
+  height: min(560px, calc(100dvh - 8rem));
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+  animation: pop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: bottom right;
+}
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, #0d4a38, #0a3a2c);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  background: linear-gradient(135deg, #34b583, #138a5e);
+  border-radius: 14px;
+}
+
+.avatar svg {
+  width: 22px;
+  height: 22px;
+}
+
+.titles {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.titles strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.titles small {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.76rem;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Mensajes ---------- */
+.messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.msg {
+  flex: none;                     /* evita que las burbujas se aplasten cuando hay muchos mensajes */
+  align-self: flex-start;
+  max-width: 88%;
+  padding: 0.65rem 0.9rem;
+  background: var(--soft);
+  border-radius: 16px 16px 16px 4px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.msg p {
+  margin: 0;
+  white-space: pre-wrap;          /* respeta los saltos de línea de las respuestas */
+  overflow-wrap: anywhere;
+}
+
+.msg.user {
+  align-self: flex-end;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-radius: 16px 16px 4px 16px;
+}
+
+.msg.typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.85rem 1rem;
+}
+
+.msg.typing span {
+  width: 7px;
+  height: 7px;
+  background: var(--muted);
+  border-radius: 50%;
+  animation: blink 1.2s infinite ease-in-out;
+}
+
+.msg.typing span:nth-child(2) { animation-delay: 0.15s; }
+.msg.typing span:nth-child(3) { animation-delay: 0.3s; }
+
+/* ---------- Sugerencias ---------- */
+.chips {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0 1rem 0.85rem;
+}
+
+.chips button {
+  padding: 0.42rem 0.8rem;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.chips button:hover {
+  background: var(--soft);
+}
+
+/* ---------- Escribir ---------- */
+.composer {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.composer textarea {
+  flex: 1;
+  width: auto;
+  min-height: 44px;
+  max-height: 110px;
+  padding: 0.7rem 1rem;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  resize: none;
+}
+
+.composer textarea:focus {
+  background: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  outline: none;
+}
+
+.send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+}
+
+.send svg {
+  width: 20px;
+  height: 20px;
+}
+
+.send:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+  40%           { opacity: 1;    transform: translateY(-3px); }
+}
+
+/* ---------- Móvil: ventana casi a pantalla completa ---------- */
+@media (max-width: 520px) {
+  :host {
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+
+  .panel {
+    width: calc(100vw - 1.5rem);
+    height: min(600px, calc(100dvh - 6.5rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel, .msg.typing span { animation: none; }
+  .fab { transition: none; }
+}
